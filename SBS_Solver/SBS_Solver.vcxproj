@@ -111,6 +111,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\sbs_solver.cpp" />
+    <ClCompile Include="src\settings_and_param.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\sbs_solver.h" />
+    <ClInclude Include="src\settings_and_param.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\settings.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

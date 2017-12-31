@@ -9,7 +9,7 @@ int main(int argc, char *argv, char *env)
 	SBS_Solver sbs("settings.json");
 	
 	sbs.Solve();
-	sbs.Dump("data.json");
+	sbs.Stringify("data.json");
 
 	return (0);
 }

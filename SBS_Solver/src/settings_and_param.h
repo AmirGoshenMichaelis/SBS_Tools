@@ -21,15 +21,16 @@ public:
 };
 
 class Param {
+	std::map< std::string, double > values;
+	std::map< std::string, std::vector< std::complex<double> > > func;
 public:
 	Param();
-	Init(const json11::Json &);
+	void Init(const json11::Json &);
 
-	const std::complex<double> Es_boundary_value(const double t) const;
-	const std::complex<double> Ep_boundary_value(const double t) const;
+	const double operator[] (const std::string &) const;
+	double & operator[] (const std::string &);
+
+	const std::complex<double> Rho_Initial_Condition(const double x) const;
+	const std::complex<double> Es_Boundary_Value(const double t) const;
+	const std::complex<double> Ep_Boundary_Value(const double t) const;
 };
-
-/*
-std::map_values<std::string, double>
-
-*/

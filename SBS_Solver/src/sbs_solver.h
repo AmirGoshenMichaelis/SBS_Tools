@@ -10,5 +10,6 @@ class SBS_Solver {
 public:
 	SBS_Solver(const std::string &);
 	void Solve(void);
-	void Dump(const std::string &);
+	void Stringify(const std::string &);
+	void Dump_H5(const std::string &);
 };

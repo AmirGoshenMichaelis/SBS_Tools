@@ -4,6 +4,9 @@
 #include "settings_and_param.h"
 
 class SBS_Solver {
+	const static double a[3][3];
+	const static double a_hat[3][3];
+protected:
 	Param  param;
 	Config config;
 

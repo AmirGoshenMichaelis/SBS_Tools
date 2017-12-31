@@ -51,7 +51,7 @@ void Param::Init(const json11::Json & j)
 			values[it->first] = it->second.number_value();
 	std::vector< std::string > func_names{ "rho", "Ep", "Es" };
 	for (auto name : func_names) {
-		func[name] = std::vector< std::complex<double> >{ std::complex<double>() };
+		//func[name] = std::vector< std::complex<double> >{ std::complex<double>(0.0,0.0) };
 		if (j[name].is_object()) {
 			size_t size = 0;
 			std::map< std::string, std::vector<double> > map_vec{ {"imag",std::vector<double>() }, {"real",std::vector<double>() } };

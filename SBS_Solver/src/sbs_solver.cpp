@@ -1,5 +1,4 @@
-#include "sbs_solver.h"
-/*
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -10,14 +9,11 @@
 #include <vector>
 #include <chrono>
 #include <algorithm>
-
 #include "json11.hpp"
+#include "sbs_solver.h"
 
-*/
+
 //stringify
-
-
-
 //class SBS_Solver { // Stimulated Brillouin Scattering
 //				   //   Probe E_p;   // probe wave eq.
 //				   //   Pump E_s;    // stock wave eq.
@@ -402,8 +398,25 @@ int main(int argc, char *argv, char *env)
 
 */
 
-SBS_Solver::SBS_Solver(const std::string &)
+const double SBS_Solver::a[3][3] = { { 0.0, 0.0, 0.0 },{ 5.0 / 24.0, 1.0 / 3.0, -1.0 / 24.0 },{ 1.0 / 6.0, 2.0 / 3.0, 1.0 / 6.0 } };
+const double SBS_Solver::a_hat[3][3] = { { 0.0, 0.0, 0.0 },{ 3.0 / 8.0, 0.0, 9.0 / 8.0 },{ 4.0 / 3.0, -8.0 / 3.0, 10.0 / 3.0 } };
+
+
+SBS_Solver::SBS_Solver(const std::string & file_name)
 {
+	std::ifstream json_file(file_name);
+	if (json_file.good()) {
+		std::stringstream settings_json;
+		settings_json << json_file.rdbuf();
+		std::string err;
+		json11::Json j = json11::Json::parse(settings_json.str(), err);
+		if (!err.empty())
+			throw err;
+		if (j["configuration"].is_object())
+			config.Init(j["configuration"]);
+		if (j["parameters"].is_object())
+			param.Init(j["parameters"]);
+	};
 }
 
 void SBS_Solver::Solve(void)

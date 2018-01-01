@@ -66,8 +66,8 @@ void Param::Init(const json11::Json & j)
 			}
 			func[name].clear();
 			for (unsigned long ele = 0; ele < size; ++ele) {
-				double b = (map_vec["imag"].size() < size) ? map_vec["imag"][ele] : 0.0;
-				double a = (map_vec["real"].size() < size) ? map_vec["real"][ele] : 0.0;
+				double b = (ele < map_vec["imag"].size()) ? map_vec["imag"][ele] : 0.0;
+				double a = (ele < map_vec["real"].size()) ? map_vec["real"][ele] : 0.0;
 				func[name].push_back(std::complex<double>(a, b));
 			}
 		}

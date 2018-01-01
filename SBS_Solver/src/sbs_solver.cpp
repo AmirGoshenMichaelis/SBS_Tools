@@ -61,86 +61,53 @@ void SBS_Solver::Solve(void)
 	}
 }
 
-void SBS_Solver::Stringify(const std::string &)
+void SBS_Solver::Stringify(const std::string & file_name)
 {
-	/*
-		std::ofstream data("data.json");
+	std::ofstream data(file_name);
 
-	data << "{ ";
-	data << R"("t":[)";
-	for (unsigned long i = 0; i < 2 * conf.N; ++i)
-		data << sbs.t[i] << ",";
-	data << sbs.t[2 * conf.N] << "]";
-	data << "," << std::endl;
-	data << R"("z":[)";
-	for (unsigned long i = 0; i < conf.N; ++i)
-		data << sbs.z[i] << ",";
-	data << sbs.z[conf.N] << "]";
-	data << "," << std::endl;
-	data << R"("Ep":{)";
-	data << R"("real":[)";
-	for (unsigned long i = 0; i < 2 * conf.N + 1; ++i) {
-		data << "[";
-		for (unsigned long j = 0; j < conf.N; ++j)
-			data << sbs.Ep[i][j].real() << ",";
-		data << sbs.Ep[i][conf.N].real() << (i == 2 * conf.N ? "]" : " ],") << std::endl;
+	data << "{ " << std::endl;
+
+	std::map< std::string, Vec * > map_vec{ { "t", &t }, { "z", &z }};
+	bool add_comma = false;
+	for (auto it : map_vec) {
+		if (add_comma)
+			data << "," << std::endl;
+		else 
+			add_comma = true;
+		data << "\"" << it.first << "\" : [";
+		for (unsigned long i = 0; i < it.second->size(); ++i)
+			data << (*it.second)[i] << ((i<it.second->size()-1)? "," : "]");
 	}
-	data << " ]" << std::endl;
-	data << "," << std::endl;
-	data << R"("imag":[)";
-	for (unsigned long i = 0; i < 2 * conf.N + 1; ++i) {
-		data << "[";
-		for (unsigned long j = 0; j < conf.N; ++j)
-			data << sbs.Ep[i][j].imag() << ",";
-		data << sbs.Ep[i][conf.N].imag() << (i == 2 * conf.N ? "]" : " ],") << std::endl;
-	}
-	data << " ]" << std::endl;
-	data << "}" << std::endl;
 
 	data << "," << std::endl;
-	data << R"("Es":{)";
-	data << R"("real":[)";
-	for (unsigned long i = 0; i < 2 * conf.N + 1; ++i) {
-		data << "[";
-		for (unsigned long j = 0; j < conf.N; ++j)
-			data << sbs.Es[i][j].real() << ",";
-		data << sbs.Es[i][conf.N].real() << (i == 2 * conf.N ? "]" : " ],") << std::endl;
-	}
-	data << " ]" << std::endl;
-	data << "," << std::endl;
-	data << R"("imag":[)";
-	for (unsigned long i = 0; i < 2 * conf.N + 1; ++i) {
-		data << "[";
-		for (unsigned long j = 0; j < conf.N; ++j)
-			data << sbs.Es[i][j].imag() << ",";
-		data << sbs.Es[i][conf.N].imag() << (i == 2 * conf.N ? "]" : " ],") << std::endl;
-	}
-	data << " ]" << std::endl;
-	data << "}" << std::endl;
 
-	data << "," << std::endl;
-	data << R"("Rho":{)";
-	data << R"("real":[)";
-	for (unsigned long i = 0; i < 2 * conf.N + 1; ++i) {
-		data << "[";
-		for (unsigned long j = 0; j < conf.N; ++j)
-			data << sbs.Rho[i][j].real() << ",";
-		data << sbs.Rho[i][conf.N].real() << (i == 2 * conf.N ? "]" : " ],") << std::endl;
+	std::map< std::string, Matrix * > map_matrix{ { "Ep", &Ep }, { "Es", &Es }, { "Rho", &Rho } };
+	add_comma = false;
+	for (auto it : map_matrix) {
+		if (add_comma)
+			data << "," << std::endl;
+		else
+			add_comma = true;
+		data << "\"" << it.first << "\" : {" << std::endl;
+		data << "\t\"real\" : \n\t[" << std::endl;
+		for (unsigned long i = 0; i < it.second->size(); ++i) {
+			data << "\t\t[";
+			for (unsigned long j = 0; j < (*it.second)[i].size(); ++j)
+				data << (*it.second)[i][j].real() << ((j < (*it.second)[i].size() - 1) ? "," : "");
+			data << ((i < it.second->size() - 1) ? "]," : "]") << std::endl;
+		}
+		data << "\t], " << std::endl << "\t\"imag\" : [" << std::endl;
+		for (unsigned long i = 0; i < it.second->size(); ++i) {
+			data << "\t\t[";
+			for (unsigned long j = 0; j < (*it.second)[i].size(); ++j)
+				data << (*it.second)[i][j].imag() << ((j < (*it.second)[i].size() - 1) ? "," : "");
+			data << ((i < it.second->size() - 1) ? "]," : "]") << std::endl;
+		}
+		data << "\t]" << std::endl;
+		data << "\t}";
 	}
-	data << " ]" << std::endl;
-	data << "," << std::endl;
-	data << R"("imag":[)";
-	for (unsigned long i = 0; i < 2 * conf.N + 1; ++i) {
-		data << "[";
-		for (unsigned long j = 0; j < conf.N; ++j)
-			data << sbs.Rho[i][j].imag() << ",";
-		data << sbs.Rho[i][conf.N].imag() << (i == 2 * conf.N ? "]" : " ],") << std::endl;
-	}
-	data << " ]" << std::endl;
-	data << "}" << std::endl;
-	data << "}" << std::endl;
 
-	*/
+	data << "\n}" << std::endl;
 }
 
 void SBS_Solver::Dump_H5(const std::string &)
@@ -168,15 +135,15 @@ void SBS_Solver::Init_Variables(void)
 	// Boundary condition
 	for (unsigned long i = 0; i < sim_points.points.temporal; i++) {
 		t[i] = i*config["h"];
-		Ep[i][sim_points.points.spatial - 1] = param.Ep_Boundary_Value(i);
-		Es[i][0] = param.Es_Boundary_Value(i);
+		Ep[i][sim_points.points.spatial - 1] = param.Ep_Boundary_Value(t[i]);
+		Es[i][0] = param.Es_Boundary_Value(t[i]);
 	}
 	// Initial condition
 	for (unsigned long k = 0; k < sim_points.points.spatial; k++) {
 		z[k] = k*config["h"];
 		Ep[0][k] = 0.0;
 		Es[0][k] = 0.0;
-		Rho[0][k] = 0.0;
+		Rho[0][k] = param.Rho_Initial_Condition(z[k]);
 	}
 
 }
@@ -257,7 +224,7 @@ double SBS_Solver::SolveRho(const unsigned long i, const unsigned long k)
 		Rho[i + 1][k] = Rho[i][k] + config["h"] / 2.0 * rho_eq.Corrector();
 	}
 
-	if (i < sim_points.mid_pints.temporal && k < sim_points.mid_pints.spatial) {
+	if (i < sim_points.mid_pints.temporal-1 && k < sim_points.mid_pints.spatial) {
 		if (i >= 1) {
 			RhoEquation rho_eq(param, Matrix{ { Get_Grid_Mid_Values(i,k) },{ Get_Grid_Mid_Values(i - 1,k) } });
 			Rho_mid[i + 1][k] = Rho_mid[i][k] + config["h"] / 2.0 * rho_eq.Predictor();

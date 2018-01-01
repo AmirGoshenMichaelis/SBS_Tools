@@ -36,7 +36,7 @@ Param::Param()
 		{ "Gamma_B", 2 * Constants::pi * 40e6 },
 		{ "g0", 5e-11 },
 		{ "Delta_omega", 0.0 },
-		{ "alpha ", 2.3e-5 },
+		{ "alpha", 2.3e-5 },
 		{ "rho", json11::Json::object{ { "imag" , 0.0 }, {"real", 0.0 } } },
 		{ "Ep",  json11::Json::object{ { "imag" , 0.0 }, {"real", 0.0 } } },
 		{ "Es",  json11::Json::object{ { "imag" , 0.0 }, {"real", 0.0 } } },

@@ -2,13 +2,13 @@
   "configuration": {
     "L": 50.0,
     "N": 1e3,
-    "max_err": 1e-5,
-    "max_iteration": 10
+    "MaxErr": 1e-5,
+    "MaxIteration": 10
   },
   "parameters": {
     "rho": {
       "imag": [ 0 ],
-      "real": [ 0 ]
+      "real": [ 2196 ]
     },
     "Ep": {
       "imag": [ 0 ],

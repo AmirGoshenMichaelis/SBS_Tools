@@ -10,6 +10,7 @@ int main(int argc, char *argv, char *env)
 	
 	sbs.Solve();
 	sbs.Stringify("data.json");
+	sbs.Dump_H5("data.h5");
 
 	return (0);
 }

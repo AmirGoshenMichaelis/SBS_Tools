@@ -6,17 +6,22 @@
     "MaxIteration": 10
   },
   "parameters": {
+    "n_fg": 1.45,
+    "Gamma_B": 251327412.28717598,
+    "g0": 5e-11,
+    "Delta_omega": 0.0,
+    "alpha": 2.3e-5,
     "rho": {
       "imag": [ 0 ],
       "real": [ 2196 ]
     },
     "Ep": {
       "imag": [ 0 ],
-      "real": [ 0 ]
+      "real": [ 1.0 ]
     },
     "Es": {
       "imag": [ 0 ],
-      "real": [ 0 ]
+      "real": [ 0.01 ]
     }
   }
 }

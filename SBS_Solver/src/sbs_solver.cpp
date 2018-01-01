@@ -106,8 +106,24 @@ void SBS_Solver::Stringify(const std::string & file_name)
 		data << "\t]" << std::endl;
 		data << "\t}";
 	}
+	data << "," << std::endl;
+	data << "\"log\" : {" << std::endl;
+	map_vec.clear();
+	map_vec["duration_elapsed_time_seconds"] = &iteration_info.duration_elapsed_time_seconds;
+	map_vec["error"] = &iteration_info.error;
+	add_comma = false;
+	for (auto it : map_vec) {
+		if (add_comma)
+			data << "," << std::endl;
+		else
+			add_comma = true;
+		data << "\t\"" << it.first << "\" : [";
+		for (unsigned long i = 0; i < it.second->size(); ++i)
+			data << (*it.second)[i] << ((i<it.second->size() - 1) ? "," : "]");
+	}
+	data << "\n\t}" << std::endl;
 
-	data << "\n}" << std::endl;
+	data << "}" << std::endl;
 }
 
 void SBS_Solver::Dump_H5(const std::string &)

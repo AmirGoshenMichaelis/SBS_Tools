@@ -10,6 +10,7 @@
 #include <chrono>
 #include <algorithm>
 #include "json11.hpp"
+#include "error_estimate.h"
 #include "sbs_solver.h"
 
 
@@ -56,7 +57,7 @@ void SBS_Solver::Solve(void)
 			(std::fabs(pre_err - err) < config["MaxErr"]) || // relative absolute error
 			(std::fabs(pre_err - err) / err < config["MaxErr"]) // relative error
 			)
-			;// break;
+			break;
 		pre_err = err;
 	}
 }
@@ -67,16 +68,16 @@ void SBS_Solver::Stringify(const std::string & file_name)
 
 	data << "{ " << std::endl;
 
-	std::map< std::string, Vec * > map_vec{ { "t", &t }, { "z", &z }};
+	std::map< std::string, Vec * > map_vec{ { "t", &t }, { "z", &z } };
 	bool add_comma = false;
 	for (auto it : map_vec) {
 		if (add_comma)
 			data << "," << std::endl;
-		else 
+		else
 			add_comma = true;
 		data << "\"" << it.first << "\" : [";
 		for (unsigned long i = 0; i < it.second->size(); ++i)
-			data << (*it.second)[i] << ((i<it.second->size()-1)? "," : "]");
+			data << (*it.second)[i] << ((i < it.second->size() - 1) ? "," : "]");
 	}
 
 	data << "," << std::endl;
@@ -119,7 +120,7 @@ void SBS_Solver::Stringify(const std::string & file_name)
 			add_comma = true;
 		data << "\t\"" << it.first << "\" : [";
 		for (unsigned long i = 0; i < it.second->size(); ++i)
-			data << (*it.second)[i] << ((i<it.second->size() - 1) ? "," : "]");
+			data << (*it.second)[i] << ((i < it.second->size() - 1) ? "," : "]");
 	}
 	data << "\n\t}" << std::endl;
 
@@ -197,8 +198,16 @@ double SBS_Solver::SolveEs(const unsigned long i, const unsigned long k)
 		return (0.0 /* std::numeric_limits<double>::quiet_NaN() */);
 	// NumericError err;
 	EsEquation Es_eq(param, Matrix{ { Get_Grid_Values(i,k) }, { Get_Grid_Mid_Values(i,k) }, { Get_Grid_Values(i + 1,k + 1) } });
+	ErrorEstimate<std::complex<double>> err_mid_point(Es_mid[i][k]);
+
 	Es_mid[i][k] = Es[i][k] + config["h"] * Es_eq.Mid();
+
+	err_mid_point.Update(Es_mid[i][k]);
+	ErrorEstimate<std::complex<double>> err_point(Es[i + 1][k + 1]);
+
 	Es[i + 1][k + 1] = Es[i][k] + config["h"] * Es_eq.Point();
+
+	err_point.Update(Es[i + 1][k + 1]);
 
 	if (k <= sim_points.points.spatial - 3 && i <= sim_points.points.temporal - 3) {
 		Es_mid[i + 1][k + 1] = Es[i][k] + config["h"] * Es_eq.Extrapolate_Mid();
@@ -206,7 +215,7 @@ double SBS_Solver::SolveEs(const unsigned long i, const unsigned long k)
 	}
 
 
-	return 0.0;
+	return ErrorEstimate<std::complex<double>>::GetRelativeMax({ err_mid_point, err_point });
 }
 
 double SBS_Solver::SolveEp(const unsigned long i, const unsigned long k)
@@ -216,40 +225,51 @@ double SBS_Solver::SolveEp(const unsigned long i, const unsigned long k)
 		return (0.0 /* std::numeric_limits<double>::quiet_NaN() */);
 	// NumericError err;
 	EpEquation Ep_eq(param, Matrix{ { Get_Grid_Values(i,k) },{ Get_Grid_Mid_Values(i,k - 1) },{ Get_Grid_Values(i + 1,k - 1) } });
+	ErrorEstimate<std::complex<double>> err_mid_point(Ep_mid[i][k - 1]);
 
 	Ep_mid[i][k - 1] = Ep[i][k] + config["h"] * Ep_eq.Mid();
+
+	err_mid_point.Update(Ep_mid[i][k - 1]);
+	ErrorEstimate<std::complex<double>> err_point(Ep[i + 1][k - 1]);
+
 	Ep[i + 1][k - 1] = Ep[i][k] + config["h"] * Ep_eq.Point();
+
+	err_point.Update(Ep[i + 1][k - 1]);
 
 	if (k >= 2 && i <= sim_points.points.temporal - 3) {
 		Ep_mid[i + 1][k - 2] = Ep[i][k] + config["h"] * Ep_eq.Extrapolate_Mid();
 		Ep[i + 2][k - 2] = Ep[i][k] + config["h"] * Ep_eq.Extrapolate_Point();
 	}
 
-	return 0.0;
+	return ErrorEstimate<std::complex<double>>::GetRelativeMax({ err_mid_point, err_point });
 }
 
 double SBS_Solver::SolveRho(const unsigned long i, const unsigned long k)
 {
-	// NumericError err;
+	ErrorEstimate<std::complex<double>> err_mid_point, err_point;
 	if (i < sim_points.points.temporal - 1) {
+		err_point.Init(Rho[i + 1][k]);
 		if (i >= 1) {
 			RhoEquation rho_eq(param, Matrix{ { Get_Grid_Values(i,k) },{ Get_Grid_Values(i - 1,k) } });
 			Rho[i + 1][k] = Rho[i][k] + config["h"] / 2.0 * rho_eq.Predictor();
 		}
 		RhoEquation rho_eq(param, Matrix{ { Get_Grid_Values(i + 1,k) },{ Get_Grid_Values(i,k) } });
 		Rho[i + 1][k] = Rho[i][k] + config["h"] / 2.0 * rho_eq.Corrector();
+		err_point.Update(Rho[i + 1][k]);
 	}
 
-	if (i < sim_points.mid_pints.temporal-1 && k < sim_points.mid_pints.spatial) {
+	if (i < sim_points.mid_pints.temporal - 1 && k < sim_points.mid_pints.spatial) {
+		err_mid_point.Init(Rho_mid[i + 1][k]);
 		if (i >= 1) {
 			RhoEquation rho_eq(param, Matrix{ { Get_Grid_Mid_Values(i,k) },{ Get_Grid_Mid_Values(i - 1,k) } });
 			Rho_mid[i + 1][k] = Rho_mid[i][k] + config["h"] / 2.0 * rho_eq.Predictor();
 		}
 		RhoEquation rho_eq(param, Matrix{ { Get_Grid_Mid_Values(i + 1,k) },{ Get_Grid_Mid_Values(i,k) } });
-		Rho_mid[i + 1][k] = Rho_mid[i][k] + config["h"] / 2.0 * rho_eq.Corrector();;
+		Rho_mid[i + 1][k] = Rho_mid[i][k] + config["h"] / 2.0 * rho_eq.Corrector();
+		err_mid_point.Update(Rho_mid[i + 1][k]);
 	}
 
-	return (0.0 /* std::numeric_limits<double>::quiet_NaN() */);
+	return ErrorEstimate<std::complex<double>>::GetRelativeMax({ err_mid_point, err_point });
 }
 
 SBS_Solver::SolveEq::SolveEq(const Matrix & mat) : values(mat)

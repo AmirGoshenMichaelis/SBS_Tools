@@ -117,6 +117,7 @@
     <ClCompile Include="src\settings_and_param.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\error_estimate.h" />
     <ClInclude Include="src\sbs_solver.h" />
     <ClInclude Include="src\settings_and_param.h" />
   </ItemGroup>

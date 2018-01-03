@@ -56,7 +56,7 @@ void SBS_Solver::Solve(void)
 			(std::fabs(pre_err - err) < config["MaxErr"]) || // relative absolute error
 			(std::fabs(pre_err - err) / err < config["MaxErr"]) // relative error
 			)
-			break;
+			;// break;
 		pre_err = err;
 	}
 }
@@ -324,7 +324,7 @@ std::complex<double> SBS_Solver::RhoEquation::Eq(std::complex<double> Es, std::c
 {
 	std::complex<double> value;
 	value = Rho * std::complex<double>(-(param["n_fg"] / Constants::c)*(0.5*param["Gamma_B"]), -(param["n_fg"] / Constants::c)*(-param["Delta_omega"])) +
-		std::complex<double>(-(param["n_fg"] / Constants::c)*(param["Gamma_B"] * 0.25*param["g0"]), 0.0) * Ep * std::conj(Es);
+		std::complex<double>(0.0, (param["n_fg"] / Constants::c)*(param["Gamma_B"] * 0.25*param["g0"])) * Ep * std::conj(Es);
 	return (value);
 }
 

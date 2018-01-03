@@ -12,15 +12,15 @@
     "Delta_omega": 0.0,
     "alpha": 2.3e-5,
     "rho": {
-      "imag": [ 0 ],
-      "real": [ 2196 ]
+      "imag": [ 0.0 ],
+      "real": [ 2196.0 ]
     },
     "Ep": {
-      "imag": [ 0 ],
+      "imag": [ 0.0 ],
       "real": [ 1.0 ]
     },
     "Es": {
-      "imag": [ 0 ],
+      "imag": [ 0.0 ],
       "real": [ 0.01 ]
     }
   }

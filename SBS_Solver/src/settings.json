@@ -3,7 +3,8 @@
     "L": 50.0,
     "N": 1e3,
     "MaxErr": 1e-5,
-    "MaxIteration": 10
+    "MaxIteration": 10,
+    "InerGridPointIteration": 3
   },
   "parameters": {
     "n_fg": 1.45,

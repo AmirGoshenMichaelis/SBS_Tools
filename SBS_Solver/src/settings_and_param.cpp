@@ -8,7 +8,7 @@
 
 Config::Config()
 {
-	json11::Json j = json11::Json::object{ { "L", 50.0 },{ "N", 1e3 },{ "MaxErr", 1e-5 },{ "MaxIteration", 10 } };
+	json11::Json j = json11::Json::object{ { "L", 50.0 },{ "N", 1e3 },{ "MaxErr", 1e-5 },{ "MaxIteration", 10 }, { "InerGridPointIteration", 3 } };
 	Init(j);
 }
 

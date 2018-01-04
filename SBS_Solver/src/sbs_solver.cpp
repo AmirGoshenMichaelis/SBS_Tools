@@ -172,10 +172,16 @@ double SBS_Solver::Run_Iteration_Solver(void)
 	for (unsigned long i = 0; i < sim_points.points.temporal; i++) {
 		for (unsigned long k = 0; k < sim_points.points.spatial; k++) {
 			std::vector<double> err;
-			err.push_back(SolveEs(i, k));
-			err.push_back(SolveEp(i, k));
-			err.push_back(SolveRho(i, k));
-			represented_err += *std::max_element(err.begin(), err.end()) / static_cast<double>(sim_points.points.temporal*sim_points.points.spatial);
+			for(unsigned long iter=0; iter<config["InerGridPointIteration"]; iter++) {
+				// err.clear();
+				err.push_back(SolveEs(i, k));
+				err.push_back(SolveEp(i, k));
+				err.push_back(SolveRho(i, k));
+			}
+			//represented_err += *std::max_element(err.begin(), err.end()) / static_cast<double>(sim_points.points.temporal*sim_points.points.spatial);
+			double curr_err = *std::max_element(err.begin(), err.end());
+			if (curr_err > represented_err)
+				represented_err = curr_err;
 		}
 	}
 

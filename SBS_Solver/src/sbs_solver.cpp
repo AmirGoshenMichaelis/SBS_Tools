@@ -325,7 +325,7 @@ std::complex<double> SBS_Solver::SolveEq::Extrapolate_Point(void)
 std::complex<double> SBS_Solver::EsEquation::Eq(std::complex<double> Es, std::complex<double> Ep, std::complex<double> Rho)
 {
 	std::complex<double> value;
-	value = -0.25*param["alpha"] * Es + std::complex<double>(0.0, 1) * Ep * std::conj(Rho);
+	value = -0.5*param["alpha"] * Es + std::complex<double>(0.0, 1) * Ep * std::conj(Rho);
 	return (value);
 }
 
@@ -337,7 +337,7 @@ SBS_Solver::EsEquation::EsEquation(const Param & parameters, const Matrix & mat)
 std::complex<double> SBS_Solver::EpEquation::Eq(std::complex<double> Es, std::complex<double> Ep, std::complex<double> Rho)
 {
 	std::complex<double> value;
-	value = +0.25*param["alpha"] * Ep + std::complex<double>(0.0, 1) * Es * Rho;
+	value = -0.5*param["alpha"] * Ep + std::complex<double>(0.0, 1) * Es * Rho;
 	return (value);
 }
 
@@ -349,7 +349,7 @@ SBS_Solver::EpEquation::EpEquation(const Param & parameters, const Matrix & mat)
 std::complex<double> SBS_Solver::RhoEquation::Eq(std::complex<double> Es, std::complex<double> Ep, std::complex<double> Rho)
 {
 	std::complex<double> value;
-	value = Rho * std::complex<double>(-(param["n_fg"] / Constants::c)*(0.5*param["Gamma_B"]), -(param["n_fg"] / Constants::c)*(-param["Delta_omega"])) +
+	value = (param["n_fg"] / Constants::c) * std::complex<double>(-0.5*param["Gamma_B"], param["Delta_omega"]) * Rho +
 		std::complex<double>(0.0, (param["n_fg"] / Constants::c)*(param["Gamma_B"] * 0.25*param["g0"])) * Ep * std::conj(Es);
 	return (value);
 }

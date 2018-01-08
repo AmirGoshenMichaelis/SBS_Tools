@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <complex>
+#include <random>
 #include "json11.hpp"
 #include "settings_and_param.h"
 
@@ -86,6 +87,10 @@ double & Param::operator[](const std::string & key)
 
 const std::complex<double> Param::Rho_Initial_Condition(const double x) const
 {
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	static std::uniform_real_distribution<double> dis(-1.0, 1.0);
+	return func.at("rho")[0]*std::conj(func.at("rho")[0])* std::complex<double>(dis(gen), dis(gen));
 	if (func.at("rho").size() > 0)
 		return func.at("rho")[0];
 	else

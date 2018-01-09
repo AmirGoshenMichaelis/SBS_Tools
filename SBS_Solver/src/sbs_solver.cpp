@@ -65,7 +65,7 @@ void SBS_Solver::Solve(void)
 void SBS_Solver::Stringify(const std::string & file_name)
 {
 	std::ofstream data(file_name);
-
+	data.precision(std::numeric_limits<double>::max_digits10);
 	data << "{ " << std::endl;
 
 	std::map< std::string, Vec * > map_vec{ { "t", &t }, { "z", &z } };
@@ -325,7 +325,8 @@ std::complex<double> SBS_Solver::SolveEq::Extrapolate_Point(void)
 std::complex<double> SBS_Solver::EsEquation::Eq(std::complex<double> Es, std::complex<double> Ep, std::complex<double> Rho)
 {
 	std::complex<double> value;
-	value = -0.5*param["alpha"] * Es + std::complex<double>(0.0, 1) * Ep * std::conj(Rho);
+	value = -0.5*param["alpha"] * Es + std::complex<double>(0.0, 1.0) * Ep * std::conj(Rho);
+
 	return (value);
 }
 
@@ -337,7 +338,7 @@ SBS_Solver::EsEquation::EsEquation(const Param & parameters, const Matrix & mat)
 std::complex<double> SBS_Solver::EpEquation::Eq(std::complex<double> Es, std::complex<double> Ep, std::complex<double> Rho)
 {
 	std::complex<double> value;
-	value = -0.5*param["alpha"] * Ep + std::complex<double>(0.0, 1) * Es * Rho;
+	value = -0.5*param["alpha"] * Ep + std::complex<double>(0.0, 1.0) * Es * Rho;
 	return (value);
 }
 

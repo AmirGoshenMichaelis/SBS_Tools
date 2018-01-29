@@ -22,7 +22,7 @@ int main(int argc, char **argv, char **env)
 					return (-1);
 				}
 
-	SBS_Solver sbs(opt["settings"]);
+	SBS_Solver sbs(opt["Settings"]);
 
 	sbs.Solve();
 

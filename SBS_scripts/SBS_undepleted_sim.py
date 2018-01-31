@@ -96,7 +96,7 @@ plt.ylabel('Group Index')
 fig = plt.figure();
 
 ax = fig.add_subplot(1,1,1)
-plt.plot(gain[1:], time_delay);
+plt.plot(gain[1:], group_index);
 
 plt.show();
 

@@ -4,12 +4,14 @@
 #include <string>
 #include <complex>
 #include <random>
+#include <limits>
+#include <cmath>
 #include "json11.hpp"
 #include "settings_and_param.h"
 
 Config::Config()
 {
-	json11::Json j = json11::Json::object{ { "L", 50.0 },{ "N", 1e3 },{ "MaxErr", 1e-5 },{ "MaxIteration", 10 }, { "InerGridPointIteration", 3 } };
+	json11::Json j = json11::Json::object{ { "L", 50.0 },{ "N", 1e3 },{ "MaxErr", 1e-5 },{ "MaxIteration", 10 }, { "InerGridPointIteration", 3 }, { "TimeLength", 2} };
 	Init(j);
 }
 
@@ -85,31 +87,41 @@ double & Param::operator[](const std::string & key)
 	return (values[key]);
 }
 
-const std::complex<double> Param::Rho_Initial_Condition(const double x) const
+const std::complex<double> Param::Boundary_Initial_Value(const std::string &name, const unsigned long ind) const
+{
+	std::complex<double> value;
+
+	if ((func.at(name).size() == 0) || (func.at(name).size() >= ind))
+		return (value);
+	if (func.at(name).size() == 1)
+		return func.at(name)[0];
+	value = func.at(name)[ind];
+	return (value);
+}
+
+const std::complex<double> Param::Rho_Initial_Condition(const unsigned long ind, const double x) const
 {
 	//static std::random_device rd;
 	//static std::mt19937 gen(rd());
 	//static std::uniform_real_distribution<double> dis(-1.0, 1.0);
 	//return func.at("rho")[0]*std::conj(func.at("rho")[0])* std::complex<double>(dis(gen), dis(gen));
-	if (func.at("rho").size() > 0)
-		return func.at("rho")[0];
-	else
-		return std::complex<double>();
+
+	return Boundary_Initial_Value(std::string("rho"), ind);
 }
 
-const std::complex<double> Param::Es_Boundary_Value(const double t) const
+const std::complex<double> Param::Es_Boundary_Value(const unsigned long ind, const double t) const
 {
-	if (func.at("Es").size() > 0)
-		return func.at("Es")[0];
-	else
-		return std::complex<double>();
+	double FWHM = 120e-09 * Constants::c;
+	double sigma = FWHM / (2.0*std::sqrt(2.0*std::log(2.0)) );
+	double mu = 3.0 * sigma;
+	double lambda = func.at("Es")[0].real(); // 1/std::sqrt( 2.0 * Constants::pi * sigma*sigma )
+	double value = lambda*std::exp(- (t-mu)*(t - mu) / (2.0*sigma*sigma));
+	return std::complex<double>(value, 0.0);
+	return Boundary_Initial_Value(std::string("Es"), ind);
 }
 
-const std::complex<double> Param::Ep_Boundary_Value(const double t) const
+const std::complex<double> Param::Ep_Boundary_Value(const unsigned long ind, const double t) const
 {
-	if (func.at("Ep").size() > 0)
-		return func.at("Ep")[0];
-	else
-		return std::complex<double>();
+	return Boundary_Initial_Value(std::string("Ep"), ind);
 }
 

@@ -135,9 +135,9 @@ void SBS_Solver::Init_Variables(void)
 {
 	config["h"] = config["L"] / config["N"];
 	sim_points.mid_pints.spatial = config["N"];
-	sim_points.mid_pints.temporal = 2 * config["N"];
+	sim_points.mid_pints.temporal = config["TimeLength"] * config["N"];
 	sim_points.points.spatial = config["N"] + 1;
-	sim_points.points.temporal = 2 * config["N"] + 1;
+	sim_points.points.temporal = config["TimeLength"] * config["N"] + 1;
 
 	std::vector<Matrix *> mat_ptr = { &Ep, &Es, &Rho };
 	for (auto it : mat_ptr)
@@ -152,15 +152,15 @@ void SBS_Solver::Init_Variables(void)
 	// Boundary condition
 	for (unsigned long i = 0; i < sim_points.points.temporal; i++) {
 		t[i] = i*config["h"];
-		Ep[i][sim_points.points.spatial - 1] = param.Ep_Boundary_Value(t[i]);
-		Es[i][0] = param.Es_Boundary_Value(t[i]);
+		Ep[i][sim_points.points.spatial - 1] = param.Ep_Boundary_Value(i, t[i]);
+		Es[i][0] = param.Es_Boundary_Value(i, t[i]);
 	}
 	// Initial condition
 	for (unsigned long k = 0; k < sim_points.points.spatial; k++) {
 		z[k] = k*config["h"];
 		Ep[0][k] = 0.0;
 		Es[0][k] = 0.0;
-		Rho[0][k] = param.Rho_Initial_Condition(z[k]);
+		Rho[0][k] = param.Rho_Initial_Condition(k, z[k]);
 	}
 
 }

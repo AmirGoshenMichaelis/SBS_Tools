@@ -4,17 +4,18 @@
     "N": 1e3,
     "MaxErr": 1e-5,
     "MaxIteration": 10,
-    "InerGridPointIteration": 3
+    "InerGridPointIteration": 3,
+    "TimeLength": 2
   },
   "parameters": {
     "n_fg": 1.45,
     "Gamma_B": 251327412.28717598,
     "g0": 5e-11,
     "Delta_omega": 0.0,
-    "alpha": 2.3e-5,
+    "alpha": 0.046,
     "rho": {
       "imag": [ 0.0 ],
-      "real": [ 2196.0 ]
+      "real": [ 0.0 ]
     },
     "Ep": {
       "imag": [ 0.0 ],
